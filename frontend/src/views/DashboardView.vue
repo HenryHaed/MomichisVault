@@ -24,17 +24,17 @@
       </div>
       <div class="flex-1 overflow-y-auto mt-6">
         <nav class="flex flex-col gap-2 font-['Space_Grotesk'] font-medium text-[11px] tracking-widest uppercase">
-          <a class="flex items-center gap-3 bg-cyan-500/10 text-cyan-400 border-r-2 border-cyan-400 px-6 py-4 transition-all duration-150 active:scale-95" href="#">
-            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">folder_open</span>
+          <a href="#" @click.prevent="activeSection = 'sistema'" :class="activeSection === 'sistema' ? 'bg-cyan-500/10 text-cyan-400 border-r-2 border-cyan-400' : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'" class="flex items-center gap-3 px-6 py-4 transition-all duration-150 active:scale-95">
+            <span class="material-symbols-outlined" :style="activeSection === 'sistema' ? 'font-variation-settings: \'FILL\' 1;' : ''">folder_open</span>
             Sistema_Archivos
           </a>
-          <a class="flex items-center gap-3 text-slate-500 px-6 py-4 hover:text-slate-300 hover:bg-white/5 transition-all duration-150 active:scale-95" href="#">
-            <span class="material-symbols-outlined">query_stats</span>
+          <a href="#" @click.prevent="activeSection = 'metricas'" :class="activeSection === 'metricas' ? 'bg-cyan-500/10 text-cyan-400 border-r-2 border-cyan-400' : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'" class="flex items-center gap-3 px-6 py-4 transition-all duration-150 active:scale-95">
+            <span class="material-symbols-outlined" :style="activeSection === 'metricas' ? 'font-variation-settings: \'FILL\' 1;' : ''">query_stats</span>
             Metricas_Almacenamiento
           </a>
-          <a class="flex items-center gap-3 text-slate-500 px-6 py-4 hover:text-slate-300 hover:bg-white/5 transition-all duration-150 active:scale-95" href="#">
-            <span class="material-symbols-outlined">shield_lock</span>
-            Nodos_Seguridad
+          <a href="#" @click.prevent="activeSection = 'nodos'" :class="activeSection === 'nodos' ? 'bg-cyan-500/10 text-cyan-400 border-r-2 border-cyan-400' : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'" class="flex items-center gap-3 px-6 py-4 transition-all duration-150 active:scale-95">
+            <span class="material-symbols-outlined" :style="activeSection === 'nodos' ? 'font-variation-settings: \'FILL\' 1;' : ''">shield_lock</span>
+            Seguridad
           </a>
           <a class="flex items-center gap-3 text-slate-500 px-6 py-4 hover:text-slate-300 hover:bg-white/5 transition-all duration-150 active:scale-95" href="#">
             <span class="material-symbols-outlined">terminal</span>
@@ -61,21 +61,177 @@
       <header class="hidden md:flex justify-between items-center mb-xl">
         <div>
           <h1 class="font-headline-xl text-primary font-bold tracking-tighter neon-text">NEXUS_GRID</h1>
-          <p class="font-mono-data text-on-surface-variant text-sm mt-1">ZONA SEGURA DE ASIGNACION DE ARCHIVOS</p>
+          <p class="font-mono-data text-on-surface-variant text-sm mt-1">
+            {{ activeSection === 'sistema' ? 'SISTEMA DE ARCHIVOS' : (activeSection === 'metricas' ? 'METRICAS Y TAREAS MAGICAS' : 'NODOS DE SEGURIDAD Y TRÁFICO') }}
+          </p>
         </div>
-        <div class="flex items-center gap-lg">
-          <div class="relative group">
-            <input class="bg-surface-container-low border-b border-outline-variant text-on-surface font-mono-data text-sm py-2 pl-8 pr-4 focus:outline-none focus:border-primary focus:shadow-[0_2px_10px_rgba(0,240,255,0.2)] transition-all placeholder:text-outline w-64 bg-transparent" placeholder="BUSCAR_ARCHIVOS..." type="text" />
-            <span class="material-symbols-outlined absolute left-0 top-2.5 text-outline-variant group-focus-within:text-primary transition-colors text-sm">search</span>
-          </div>
-          <button class="bg-primary text-on-primary px-6 py-2 rounded-DEFAULT font-label-caps tracking-widest hover:shadow-[0_0_15px_rgba(0,240,255,0.4)] transition-all flex items-center gap-2">
-            <span class="material-symbols-outlined text-sm">upload</span>
-            SUBIR
+        <div class="flex items-center gap-lg relative">
+          <input type="file" ref="fileInput" class="hidden" accept="image/*,application/pdf" @change="handleFileUpload" />
+          <button v-if="activeSection === 'sistema'" @click="activeSection = 'metricas'" class="bg-primary text-on-primary px-6 py-2 rounded-DEFAULT font-label-caps tracking-widest hover:shadow-[0_0_15px_rgba(0,240,255,0.4)] transition-all flex items-center gap-2 cursor-pointer">
+            <span class="material-symbols-outlined text-sm">rocket_launch</span>
+            TAREAS MAGICAS
+          </button>
+          <button v-else @click="activeSection = 'sistema'" class="border border-primary text-primary px-6 py-2 rounded-DEFAULT font-label-caps tracking-widest hover:bg-primary/10 transition-all flex items-center gap-2 cursor-pointer">
+            <span class="material-symbols-outlined text-sm">arrow_back</span>
+            VOLVER A ARCHIVOS
           </button>
         </div>
       </header>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+      <!-- SECCION: NODOS DE SEGURIDAD (Trafico) -->
+      <div v-show="activeSection === 'nodos'" class="flex flex-col gap-6 slide-in-top">
+         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Animacion Falsa de Trafico -->
+            <div class="glass-panel p-8 rounded-xl border border-primary/20 shadow-[0_0_30px_rgba(0,240,255,0.05)] relative overflow-hidden flex flex-col gap-4">
+               <div class="flex items-center gap-2 border-b border-outline-variant/30 pb-2">
+                 <span class="material-symbols-outlined text-secondary animate-pulse">radar</span>
+                 <h2 class="font-label-caps text-outline uppercase tracking-widest">Monitoreo de Tráfico Activo</h2>
+               </div>
+               
+               <div class="h-48 w-full bg-black/40 rounded border border-outline-variant/50 relative overflow-hidden flex items-end px-2 pt-2 gap-1" >
+                 <!-- Generamos barras aleatorias visualmente con CSS / Vue -->
+                 <div v-for="i in 30" :key="i" 
+                      class="flex-1 bg-primary/40 rounded-t transition-all duration-1000 origin-bottom"
+                      :style="{ height: Math.floor(Math.random() * 80 + 10) + '%', opacity: Math.random() * 0.5 + 0.5 }"
+                 ></div>
+                 <div class="absolute inset-0 bg-gradient-to-t from-primary/10 to-transparent pointer-events-none"></div>
+                 <div class="absolute w-full h-[1px] bg-primary/50 top-1/2 left-0 shadow-[0_0_10px_rgba(0,240,255,0.8)]"></div>
+               </div>
+
+               <div class="flex justify-between items-center mt-2 px-2 text-xs font-mono-data text-outline">
+                 <span>TX: <span class="text-primary">452.1 MB/s</span></span>
+                 <span>RX: <span class="text-secondary">102.4 MB/s</span></span>
+                 <span class="text-error animate-pulse">PING: 14ms</span>
+               </div>
+            </div>
+
+            <!-- Panel de Reportes PDF -->
+            <div class="glass-panel p-8 rounded-xl border border-tertiary/20 shadow-[0_0_30px_rgba(255,100,200,0.05)] flex flex-col gap-4">
+               <div class="flex items-center gap-2 border-b border-outline-variant/30 pb-2">
+                 <span class="material-symbols-outlined text-tertiary">summarize</span>
+                 <h2 class="font-label-caps text-outline uppercase tracking-widest">Reportes de Auditoría</h2>
+               </div>
+
+               <p class="font-body-md text-on-surface-variant text-sm mt-4">
+                 Genera un reporte detallado con toda la actividad de subida, tamaño de origen y fecha exacta en la base de datos de auditoría.
+               </p>
+
+               <div class="mt-auto flex flex-col gap-2 items-start bg-black/30 p-4 rounded-lg border border-outline-variant/30">
+                  <div class="flex items-center gap-2 text-xs text-on-surface font-mono-data mb-2">
+                    <span class="material-symbols-outlined text-sm text-green-400">check_circle</span>
+                    SISTEMA DE LOGS EN LINEA
+                  </div>
+                  <button @click="downloadReport" class="mt-2 bg-tertiary text-on-primary px-6 py-3 rounded-DEFAULT font-label-caps tracking-widest hover:shadow-[0_0_15px_rgba(255,100,200,0.4)] transition-all flex items-center gap-2 cursor-pointer w-full justify-center">
+                    <span class="material-symbols-outlined">picture_as_pdf</span>
+                    GENERAR PDF DE ACTIVIDAD
+                  </button>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <!-- SECCION: METRICAS Y TAREAS MAGICAS -->
+      <div v-show="activeSection === 'metricas'" class="flex flex-col gap-6 slide-in-top">
+         <div class="glass-panel p-8 rounded-xl border border-primary/20 shadow-[0_0_30px_rgba(0,240,255,0.05)]">
+            <h2 class="font-headline-md text-primary font-bold tracking-widest border-b border-primary/20 pb-4 mb-6 flex items-center gap-2">
+               <span class="material-symbols-outlined text-cyan-400">auto_awesome</span>
+               SELECTOR DE TAREAS AVANZADAS
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+               <!-- Card Tarea 1: WebP Compress -->
+               <div class="border border-outline-variant/30 rounded-xl p-6 bg-surface-container-low/50 hover:bg-primary/5 hover:border-primary/50 transition-colors cursor-pointer flex flex-col gap-3 relative overflow-hidden group" @click="openTaskModal('webp')">
+                  <div class="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <span class="material-symbols-outlined text-4xl text-cyan-400">zoom_in_map</span>
+                  <h3 class="font-label-caps text-on-surface text-lg">Comprimir a WebP</h3>
+                  <p class="font-body-sm text-on-surface-variant text-sm">Reduce el peso guardando calidad visual de tu imagen original.</p>
+               </div>
+
+               <!-- Card Tarea 2: Watermark -->
+               <div class="border border-outline-variant/30 rounded-xl p-6 bg-surface-container-low/50 hover:bg-secondary/5 hover:border-secondary/50 transition-colors cursor-pointer flex flex-col gap-3 relative overflow-hidden group" @click="openTaskModal('watermark')">
+                  <div class="absolute inset-0 bg-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <span class="material-symbols-outlined text-4xl text-secondary">branding_watermark</span>
+                  <h3 class="font-label-caps text-on-surface text-lg">Insertar Tu Marca</h3>
+                  <p class="font-body-sm text-on-surface-variant text-sm">Protege tu obra. Coloca una marca de agua en tu foto.</p>
+               </div>
+
+               <!-- Card Tarea 3: OCR Text -->
+               <div class="border border-outline-variant/30 rounded-xl p-6 bg-surface-container-low/50 hover:bg-tertiary/5 hover:border-tertiary/50 transition-colors cursor-pointer flex flex-col gap-3 relative overflow-hidden group" @click="openTaskModal('ocr')">
+                 <div class="absolute inset-0 bg-tertiary/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <span class="material-symbols-outlined text-4xl text-tertiary">document_scanner</span>
+                  <h3 class="font-label-caps text-on-surface text-lg">Extraer Texto (OCR)</h3>
+                  <p class="font-body-sm text-on-surface-variant text-sm">Sube un PDF y obtén un archivo .TXT con su texto plano.</p>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <!-- MODAL DE SUBIDA ESPECIFICO (Aparece tras elegir Tarea) -->
+      <div v-if="showUploadModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md p-4">
+         <div class="glass-panel p-8 rounded-2xl w-full max-w-2xl relative border border-primary/30 flex flex-col gap-8 shadow-[0_0_50px_rgba(0,240,255,0.2)] slide-in-top">
+            <button @click="showUploadModal = false; activeTask = ''" class="absolute top-6 right-6 text-outline hover:text-error transition-colors p-2 hover:bg-white/5 rounded-full">
+              <span class="material-symbols-outlined text-2xl">close</span>
+            </button>
+            
+            <header class="flex flex-col gap-2 border-b border-primary/20 pb-4">
+               <h2 class="font-headline-md text-primary font-bold tracking-widest flex items-center gap-3">
+                  <span class="material-symbols-outlined text-cyan-400 text-3xl">rocket_launch</span>
+                  CONFIGURAR SUBIDA: {{ activeTask.toUpperCase() }}
+               </h2>
+               <p class="font-mono-data text-[10px] text-outline tracking-[0.2em] uppercase">Módulo de Procesamiento Nexus_Grid v2.0</p>
+            </header>
+
+            <div class="flex flex-col gap-6 max-h-[70vh] overflow-y-auto pr-2">
+               <!-- Input Text (Solo para marca de Agua) -->
+               <div v-if="activeTask === 'watermark'" class="flex flex-col gap-3">
+                 <label class="font-label-caps text-xs text-primary/80 tracking-widest flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm">edit_note</span>
+                    TEXTO DE TU MARCA DE AGUA:
+                 </label>
+                 <input type="text" v-model="watermarkInput" placeholder="Ej. Propiedad de Acme Inc." class="bg-black/40 border border-outline-variant rounded-lg p-5 text-on-surface font-body-md focus:outline-none focus:border-secondary transition-all focus:ring-1 focus:ring-secondary/50 placeholder:text-outline/40" />
+               </div>
+
+              <!-- Upload Area -->
+              <div 
+                  class="border-2 border-dashed rounded-2xl p-16 flex flex-col items-center justify-center text-center gap-5 transition-all cursor-pointer group relative overflow-hidden flex-shrink-0"
+                  :class="[isDragging ? 'border-primary bg-primary/10 scale-[0.99]' : 'border-outline-variant bg-white/5 hover:bg-white/10 hover:border-primary/50']"
+                  @dragover.prevent="isDragging = true"
+                  @dragleave.prevent="isDragging = false"
+                  @drop.prevent="handleDrop"
+                  @click="triggerFileInput"
+               >
+                 <div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+
+                 <div v-if="!isUploading" class="flex flex-col items-center gap-4">
+                   <div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <span class="material-symbols-outlined text-5xl text-primary/70">cloud_upload</span>
+                   </div>
+                   <div>
+                     <p class="font-label-caps text-on-surface text-xl tracking-tight">Suelta el archivo para iniciar</p>
+                     <p class="font-mono-data text-xs text-outline mt-2 tracking-widest">— O HAZ CLIC PARA EXPLORAR EL SISTEMA —</p>
+                   </div>
+                 </div>
+
+                 <div v-else class="flex flex-col items-center gap-4 py-4">
+                    <div class="relative w-16 h-16">
+                      <div class="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
+                      <div class="absolute inset-0 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                    <p class="font-label-caps text-primary neon-text tracking-[0.3em] text-sm animate-pulse">>> INICIANDO_TRANSMISION...</p>
+                 </div>
+              </div>
+               
+               <div class="flex items-start gap-3 bg-error/5 border border-error/20 p-4 rounded-lg flex-shrink-0">
+                  <span class="material-symbols-outlined text-error text-xl">info</span>
+                  <p class="text-[11px] text-error/80 font-mono-data leading-relaxed uppercase">
+                    Advertencia: Esta operación modificará los metadatos originales del archivo. Asegúrate de tener respaldo de la data crítica antes de proceder.
+                  </p>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <!-- SECCION: SISTEMA DE ARCHIVOS -->
+      <div v-show="activeSection === 'sistema'" class="grid grid-cols-1 lg:grid-cols-12 gap-gutter slide-in-top">
         <section class="lg:col-span-4 glass-panel rounded-xl p-lg flex flex-col gap-md relative overflow-hidden">
           <div class="absolute -right-10 -top-10 w-32 h-32 bg-primary/5 rounded-full blur-2xl"></div>
           <h2 class="font-label-caps text-outline flex items-center gap-2 uppercase">
@@ -113,50 +269,23 @@
               Directorio Activo
             </h2>
             <div class="flex gap-2">
-              <button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">filter_list</span></button>
-              <button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">sort</span></button>
+              <button class="text-on-surface-variant hover:text-primary transition-colors" @click="fetchFiles" title="Refrescar vista"><span class="material-symbols-outlined text-sm">refresh</span></button>
             </div>
           </div>
-          <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
-            <div class="group border border-outline-variant/50 rounded-lg p-4 bg-surface-container-low/30 hover:bg-surface-container-high/50 hover:border-primary/50 transition-all duration-300 cursor-pointer relative overflow-hidden flex flex-col items-center justify-center text-center gap-3 h-32">
+          <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4" v-if="files.length > 0">
+            <div v-for="file in files" :key="file.id" @click="downloadFile(file.path, file.name)" class="group border border-outline-variant/50 rounded-lg p-4 bg-surface-container-low/30 hover:bg-surface-container-high/50 hover:border-primary/50 transition-all duration-300 cursor-pointer relative overflow-hidden flex flex-col items-center justify-center text-center gap-3 h-32">
               <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <span class="material-symbols-outlined text-4xl text-primary/70 group-hover:text-primary group-hover:drop-shadow-[0_0_10px_rgba(0,240,255,0.8)] transition-all duration-300" style="font-variation-settings: 'FILL' 1;">description</span>
+              <span class="material-symbols-outlined text-4xl text-primary/70 group-hover:text-primary group-hover:drop-shadow-[0_0_10px_rgba(0,240,255,0.8)] transition-all duration-300" style="font-variation-settings: 'FILL' 1;">
+                {{ file.name.endsWith('.webp') ? 'image' : 'description' }}
+              </span>
               <div>
-                <div class="font-body-sm text-on-surface truncate w-full px-2">quantum_schematics.pdf</div>
-                <div class="font-mono-data text-[10px] text-on-surface-variant mt-1">2.4 GB • cifrado</div>
-              </div>
-            </div>
-            <div class="group border border-outline-variant/50 rounded-lg p-4 bg-surface-container-low/30 hover:bg-surface-container-high/50 hover:border-primary/50 transition-all duration-300 cursor-pointer relative overflow-hidden flex flex-col items-center justify-center text-center gap-3 h-32">
-              <div class="absolute inset-0 bg-gradient-to-br from-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <span class="material-symbols-outlined text-4xl text-secondary/70 group-hover:text-secondary group-hover:drop-shadow-[0_0_10px_rgba(235,178,255,0.8)] transition-all duration-300" style="font-variation-settings: 'FILL' 1;">image</span>
-              <div>
-                <div class="font-body-sm text-on-surface truncate w-full px-2">neural_net_vis.png</div>
-                <div class="font-mono-data text-[10px] text-on-surface-variant mt-1">840 MB • bruto</div>
-              </div>
-            </div>
-            <div class="group border border-outline-variant/50 rounded-lg p-4 bg-surface-container-low/30 hover:bg-surface-container-high/50 hover:border-primary/50 transition-all duration-300 cursor-pointer relative overflow-hidden flex flex-col items-center justify-center text-center gap-3 h-32">
-              <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <span class="material-symbols-outlined text-4xl text-primary/70 group-hover:text-primary group-hover:drop-shadow-[0_0_10px_rgba(0,240,255,0.8)] transition-all duration-300" style="font-variation-settings: 'FILL' 1;">folder</span>
-              <div>
-                <div class="font-body-sm text-on-surface truncate w-full px-2">core_archives_2042</div>
-                <div class="font-mono-data text-[10px] text-on-surface-variant mt-1">12 elementos • boveda</div>
-              </div>
-            </div>
-            <div class="group border border-outline-variant/50 rounded-lg p-4 bg-surface-container-low/30 hover:bg-surface-container-high/50 hover:border-primary/50 transition-all duration-300 cursor-pointer relative overflow-hidden flex flex-col items-center justify-center text-center gap-3 h-32">
-              <div class="absolute inset-0 bg-gradient-to-br from-tertiary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <span class="material-symbols-outlined text-4xl text-tertiary/70 group-hover:text-tertiary group-hover:drop-shadow-[0_0_10px_rgba(228,226,228,0.8)] transition-all duration-300" style="font-variation-settings: 'FILL' 1;">movie</span>
-              <div>
-                <div class="font-body-sm text-on-surface truncate w-full px-2">drone_feed_alpha.mp4</div>
-                <div class="font-mono-data text-[10px] text-on-surface-variant mt-1">14.2 GB • flujo</div>
+                <div class="font-body-sm text-on-surface w-full px-2 break-all">{{ file.name }}</div>
+                <div class="font-mono-data text-[10px] text-on-surface-variant mt-1">{{ formatBytes(file.size) }} • click p/ descargar</div>
               </div>
             </div>
           </div>
-          <div class="mt-auto flex justify-center pt-4">
-            <div class="flex gap-2 items-center">
-              <div class="w-2 h-2 rounded-full bg-primary cyan-glow-hover"></div>
-              <div class="w-2 h-2 rounded-full bg-surface-variant"></div>
-              <div class="w-2 h-2 rounded-full bg-surface-variant"></div>
-            </div>
+          <div class="mt-auto flex justify-center pt-8 text-outline font-mono-data text-xs" v-else>
+             NO HAY ARCHIVOS EN EL DIRECTORIO SALIDA_PROCESADA
           </div>
         </section>
 
@@ -190,3 +319,121 @@
     </main>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+
+const isUploading = ref(false)
+const fileInput = ref<HTMLInputElement | null>(null)
+const files = ref<any[]>([])
+
+const activeSection = ref<'sistema' | 'metricas'>('sistema')
+const showUploadModal = ref(false)
+const activeTask = ref<string>('')
+const watermarkInput = ref<string>('')
+const isDragging = ref(false)
+
+const openTaskModal = (task: string) => {
+  activeTask.value = task
+  showUploadModal.value = true
+  if (task !== 'watermark') {
+    watermarkInput.value = ''
+  }
+}
+
+const triggerFileInput = () => {
+  if (isUploading.value) return
+  fileInput.value?.click()
+}
+
+const formatBytes = (bytes: number, decimals = 2) => {
+  if (!+bytes) return '0 Bytes'
+  const k = 1024
+  const dm = decimals < 0 ? 0 : decimals
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
+}
+
+const downloadReport = async () => {
+  // El backend lo autocompletará basado en el admin del seeding si no enviamos un ID.
+  try {
+     const url = `http://localhost:3000/dropbox/report?usuarioId=null`
+     window.open(url, '_blank')
+  } catch (error) {
+    console.error('Error report', error)
+  }
+}
+
+const handleDrop = (event: DragEvent) => {
+  isDragging.value = false
+  const file = event.dataTransfer?.files?.[0]
+  if (file) processUpload(file)
+}
+
+const handleFileUpload = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (file) processUpload(file)
+}
+
+const processUpload = async (file: File) => {
+  if (!activeTask.value) {
+     alert('Por favor selecciona una Tarea antes de subir.')
+     return
+  }
+
+  isUploading.value = true
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('task', activeTask.value)
+
+  if (activeTask.value === 'watermark' && watermarkInput.value) {
+     formData.append('watermarkText', watermarkInput.value)
+  }
+
+  try {
+    const res = await fetch('http://localhost:3000/dropbox/upload', {
+      method: 'POST',
+      body: formData
+    })
+    const data = await res.json()
+    if (data.ok) {
+      // Ocultar modal, resetear variables y refrescar lista
+      showUploadModal.value = false
+      activeTask.value = ''
+      watermarkInput.value = ''
+      activeSection.value = 'sistema'
+      await fetchFiles()
+    } else {
+      alert('Error: ' + data.message)
+    }
+  } catch (error) {
+    console.error('Error uploading', error)
+    alert('Ocurrió un error al subir el archivo.')
+  } finally {
+    isUploading.value = false
+    if (fileInput.value) fileInput.value.value = ''
+  }
+}
+
+const fetchFiles = async () => {
+  try {
+    const res = await fetch('http://localhost:3000/dropbox/files')
+    const data = await res.json()
+    if (data.ok) {
+      files.value = data.files || []
+    }
+  } catch (err) {
+    console.error('Error fetching files:', err)
+  }
+}
+
+const downloadFile = (path: string, name: string) => {
+  window.open(`http://localhost:3000/dropbox/download?path=${encodeURIComponent(path)}`, '_blank')
+}
+
+onMounted(() => {
+  fetchFiles()
+})
+</script>
