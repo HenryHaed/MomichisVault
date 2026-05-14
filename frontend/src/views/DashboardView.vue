@@ -36,9 +36,9 @@
             <span class="material-symbols-outlined" :style="activeSection === 'nodos' ? 'font-variation-settings: \'FILL\' 1;' : ''">shield_lock</span>
             Seguridad
           </a>
-          <a class="flex items-center gap-3 text-slate-500 px-6 py-4 hover:text-slate-300 hover:bg-white/5 transition-all duration-150 active:scale-95" href="#">
-            <span class="material-symbols-outlined">terminal</span>
-            Registros_Sistema
+          <a href="#" @click.prevent="activeSection = 'almacenamiento'" :class="activeSection === 'almacenamiento' ? 'bg-cyan-500/10 text-cyan-400 border-r-2 border-cyan-400' : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'" class="flex items-center gap-3 px-6 py-4 transition-all duration-150 active:scale-95">
+            <span class="material-symbols-outlined" :style="activeSection === 'almacenamiento' ? 'font-variation-settings: \'FILL\' 1;' : ''">cloud_upload</span>
+            Almacenamiento_Compartido
           </a>
         </nav>
       </div>
@@ -62,7 +62,7 @@
         <div>
           <h1 class="font-headline-xl text-primary font-bold tracking-tighter neon-text">NEXUS_GRID</h1>
           <p class="font-mono-data text-on-surface-variant text-sm mt-1">
-            {{ activeSection === 'sistema' ? 'SISTEMA DE ARCHIVOS' : (activeSection === 'metricas' ? 'METRICAS Y TAREAS MAGICAS' : 'NODOS DE SEGURIDAD Y TRÁFICO') }}
+            {{ activeSection === 'sistema' ? 'SISTEMA DE ARCHIVOS' : (activeSection === 'metricas' ? 'METRICAS Y TAREAS MAGICAS' : (activeSection === 'almacenamiento' ? 'ALMACENAMIENTO COMPARTIDO' : 'NODOS DE SEGURIDAD Y TRÁFICO')) }}
           </p>
         </div>
         <div class="flex items-center gap-lg relative">
@@ -130,7 +130,93 @@
          </div>
       </div>
 
-      <!-- SECCION: METRICAS Y TAREAS MAGICAS -->
+      <!-- SECCION: ALMACENAMIENTO COMPARTIDO -->
+      <div v-show="activeSection === 'almacenamiento'" class="flex flex-col gap-6 slide-in-top">
+         <!-- Panel Principal de Archivos OCR -->
+         <div class="glass-panel p-8 rounded-xl border border-secondary/20 shadow-[0_0_30px_rgba(0,240,255,0.05)]">
+            <div class="flex items-center justify-between border-b border-secondary/20 pb-4 mb-6">
+               <h2 class="font-headline-md text-secondary font-bold tracking-widest flex items-center gap-2">
+                  <span class="material-symbols-outlined text-secondary text-2xl">cloud_upload</span>
+                  ALMACENAMIENTO COMPARTIDO
+               </h2>
+               <div class="flex gap-3">
+                  <button @click="fetchOcrFiles" class="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary hover:bg-primary/20 rounded-lg transition-all" :disabled="loadingOcr">
+                     <span class="material-symbols-outlined text-sm">refresh</span>
+                     <span v-if="!loadingOcr" class="text-xs font-label-caps">REFRESCAR</span>
+                     <span v-else class="text-xs font-label-caps animate-spin">⟳</span>
+                  </button>
+                  <button v-if="ocrFiles.length > 0" @click="deleteAllOcrFiles" class="flex items-center gap-2 px-4 py-2 bg-error/10 text-error hover:bg-error/20 rounded-lg transition-all">
+                     <span class="material-symbols-outlined text-sm">delete_sweep</span>
+                     <span class="text-xs font-label-caps">LIMPIAR TODO</span>
+                  </button>
+               </div>
+            </div>
+
+            <!-- Lista de Archivos OCR y del Sistema -->
+            <div v-if="loadingOcr" class="flex items-center justify-center py-12 gap-3">
+               <span class="material-symbols-outlined animate-spin text-secondary">settings</span>
+               <p class="text-on-surface-variant font-body-md">Cargando archivos...</p>
+            </div>
+            <div v-else-if="ocrFiles.length === 0" class="flex flex-col items-center justify-center py-16 gap-4">
+               <span class="material-symbols-outlined text-5xl text-outline/40">cloud_queue</span>
+               <p class="text-on-surface-variant font-body-md text-center">No hay archivos disponibles.<br><span class="text-xs text-outline/70">Sube archivos para verlos aquí.</span></p>
+            </div>
+            <div v-else class="grid grid-cols-1 gap-3">
+               <div 
+                  v-for="file in ocrFiles" 
+                  :key="`${file.type}-${file.fileId}`"
+                  class="border border-outline-variant/30 rounded-lg p-4 bg-surface-container-low/50 hover:bg-surface-container-low transition-colors flex items-center justify-between group"
+               >
+                  <div class="flex-1 flex items-center gap-4">
+                     <div class="flex items-center gap-3 flex-1 min-w-0">
+                        <span class="material-symbols-outlined text-secondary text-2xl flex-shrink-0">{{ file.type === 'ocr' ? 'description' : 'inventory_2' }}</span>
+                        <div class="flex-1 min-w-0">
+                           <p class="font-body-md text-on-surface truncate">{{ file.filename }}</p>
+                           <div class="flex gap-4 text-xs text-on-surface-variant font-mono-data mt-1">
+                              <span>{{ file.type === 'ocr' ? 'OCR' : 'ARCHIVO' }}</span>
+                              <span>{{ formatBytes(file.size) }}</span>
+                              <span>{{ new Date(file.createdAt).toLocaleDateString() }}</span>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="flex gap-2 ml-4 flex-shrink-0">
+                     <button 
+                        v-if="file.type === 'ocr'"
+                        @click="viewOcrFile(file.fileId, file.filename)"
+                        class="flex items-center gap-2 px-3 py-2 bg-primary/10 text-primary hover:bg-primary/20 rounded-lg transition-all text-xs font-label-caps opacity-0 group-hover:opacity-100 transition-opacity"
+                     >
+                        <span class="material-symbols-outlined text-sm">visibility</span>
+                        VER
+                     </button>
+                     <button 
+                        @click="deleteOcrFile(file.fileId, file.filename, file.type)"
+                        class="flex items-center gap-2 px-3 py-2 bg-error/10 text-error hover:bg-error/20 rounded-lg transition-all text-xs font-label-caps opacity-0 group-hover:opacity-100 transition-opacity"
+                     >
+                        <span class="material-symbols-outlined text-sm">delete</span>
+                        ELIMINAR
+                     </button>
+                  </div>
+               </div>
+            </div>
+
+            <!-- Estadísticas -->
+            <div v-if="ocrFiles.length > 0" class="mt-6 pt-6 border-t border-outline-variant/30 grid grid-cols-3 gap-4">
+               <div class="bg-primary/5 p-4 rounded-lg border border-primary/20 flex flex-col gap-2">
+                  <p class="text-xs text-on-surface-variant font-label-caps">TOTAL ARCHIVOS</p>
+                  <p class="text-2xl font-headline-md text-primary">{{ ocrFiles.length }}</p>
+               </div>
+               <div class="bg-secondary/5 p-4 rounded-lg border border-secondary/20 flex flex-col gap-2">
+                  <p class="text-xs text-on-surface-variant font-label-caps">ESPACIO UTILIZADO</p>
+                  <p class="text-2xl font-headline-md text-secondary">{{ formatBytes(ocrFiles.reduce((sum: number, f: any) => sum + f.size, 0)) }}</p>
+               </div>
+               <div class="bg-tertiary/5 p-4 rounded-lg border border-tertiary/20 flex flex-col gap-2">
+                  <p class="text-xs text-on-surface-variant font-label-caps">PROMEDIO POR ARCHIVO</p>
+                  <p class="text-2xl font-headline-md text-tertiary">{{ formatBytes(ocrFiles.reduce((sum: number, f: any) => sum + f.size, 0) / ocrFiles.length) }}</p>
+               </div>
+            </div>
+         </div>
+      </div>
       <div v-show="activeSection === 'metricas'" class="flex flex-col gap-6 slide-in-top">
          <div class="glass-panel p-8 rounded-xl border border-primary/20 shadow-[0_0_30px_rgba(0,240,255,0.05)]">
             <h2 class="font-headline-md text-primary font-bold tracking-widest border-b border-primary/20 pb-4 mb-6 flex items-center gap-2">
@@ -273,14 +359,14 @@
             </div>
           </div>
           <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4" v-if="files.length > 0">
-            <div v-for="file in files" :key="file.id" @click="downloadFile(file.path, file.name)" class="group border border-outline-variant/50 rounded-lg p-4 bg-surface-container-low/30 hover:bg-surface-container-high/50 hover:border-primary/50 transition-all duration-300 cursor-pointer relative overflow-hidden flex flex-col items-center justify-center text-center gap-3 h-32">
+            <div v-for="file in files" :key="file.id" @click="openPreview(file)" class="group border border-outline-variant/50 rounded-lg p-4 bg-surface-container-low/30 hover:bg-surface-container-high/50 hover:border-primary/50 transition-all duration-300 cursor-pointer relative overflow-hidden flex flex-col items-center justify-center text-center gap-3 h-32">
               <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <span class="material-symbols-outlined text-4xl text-primary/70 group-hover:text-primary group-hover:drop-shadow-[0_0_10px_rgba(0,240,255,0.8)] transition-all duration-300" style="font-variation-settings: 'FILL' 1;">
                 {{ file.name.endsWith('.webp') ? 'image' : 'description' }}
               </span>
               <div>
                 <div class="font-body-sm text-on-surface w-full px-2 break-all">{{ file.name }}</div>
-                <div class="font-mono-data text-[10px] text-on-surface-variant mt-1">{{ formatBytes(file.size) }} • click p/ descargar</div>
+                <div class="font-mono-data text-[10px] text-on-surface-variant mt-1">{{ formatBytes(file.size) }} • IA Intelligence</div>
               </div>
             </div>
           </div>
@@ -288,6 +374,75 @@
              NO HAY ARCHIVOS EN EL DIRECTORIO SALIDA_PROCESADA
           </div>
         </section>
+
+        <!-- MODAL DE PREVIEW INTELIGENTE -->
+        <div v-if="selectedFileForPreview" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 backdrop-blur-xl p-4">
+          <div class="glass-panel p-8 rounded-2xl w-full max-w-3xl relative border border-primary/40 shadow-[0_0_60px_rgba(0,240,255,0.3)] flex flex-col gap-6 max-h-[90vh] overflow-hidden slide-in-top">
+            <button @click="selectedFileForPreview = null" class="absolute top-6 right-6 text-outline hover:text-error transition-colors p-2 hover:bg-white/5 rounded-full">
+              <span class="material-symbols-outlined text-2xl">close</span>
+            </button>
+
+            <header class="flex flex-col gap-1 border-b border-primary/20 pb-4">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary text-3xl">page_info</span>
+                <h2 class="font-headline-md text-on-surface font-bold truncate pr-12">{{ selectedFileForPreview.name }}</h2>
+              </div>
+              <p class="font-mono-data text-[10px] text-outline tracking-widest uppercase">Metadata_Explorer // Nexus_Intelligence_Core</p>
+            </header>
+
+            <div class="flex-1 overflow-y-auto pr-4 flex flex-col gap-8 custom-scrollbar">
+              <!-- Información Básica -->
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white/5 p-4 rounded-lg border border-white/5">
+                   <p class="font-mono-data text-[9px] text-outline mb-1 uppercase">Extensión</p>
+                   <p class="font-label-caps text-secondary">{{ selectedFileForPreview.name.split('.').pop().toUpperCase() }}</p>
+                </div>
+                <div class="bg-white/5 p-4 rounded-lg border border-white/5">
+                   <p class="font-mono-data text-[9px] text-outline mb-1 uppercase">Tamaño</p>
+                   <p class="font-label-caps text-on-surface">{{ formatBytes(selectedFileForPreview.size) }}</p>
+                </div>
+                <div class="bg-white/5 p-4 rounded-lg border border-white/5">
+                   <p class="font-mono-data text-[9px] text-outline mb-1 uppercase">Estado</p>
+                   <div class="flex items-center gap-2">
+                     <span class="w-2 h-2 rounded-full bg-success animate-pulse"></span>
+                     <span class="font-label-caps text-success">Verificado</span>
+                   </div>
+                </div>
+                <div class="bg-white/5 p-4 rounded-lg border border-white/5">
+                   <p class="font-mono-data text-[9px] text-outline mb-1 uppercase">Protocolo</p>
+                   <p class="font-label-caps text-primary">Dropbox_v2</p>
+                </div>
+              </div>
+
+              <!-- Resumen IA (Solo si existe) -->
+              <div v-if="selectedFileForPreview.resumenIa && selectedFileForPreview.resumenIa.trim().length > 0" class="flex flex-col gap-4">
+                <div class="flex items-center gap-3 text-primary border-l-2 border-primary pl-4">
+                  <span class="material-symbols-outlined animate-pulse">psychology</span>
+                  <h3 class="font-label-caps text-lg tracking-widest">RESUMEN_INTELIGENTE (OLLAMA_LLAMA3)</h3>
+                </div>
+                <div class="bg-primary/5 border border-primary/20 p-6 rounded-xl font-body-md text-on-surface leading-loose whitespace-pre-line shadow-inner max-h-96 overflow-y-auto">
+                  {{ selectedFileForPreview.resumenIa }}
+                </div>
+              </div>
+              <div v-else-if="selectedFileForPreview.name.endsWith('.txt') || selectedFileForPreview.name.endsWith('.pdf')" class="bg-surface-container-high/30 p-8 rounded-xl border border-outline-variant/30 flex flex-col items-center justify-center text-center gap-4">
+                 <span class="material-symbols-outlined text-4xl text-outline/50">info</span>
+                 <p class="font-body-md text-outline">Este archivo no tiene resumen disponible. Puede deberse a que el texto es demasiado corto o la API de IA no estaba disponible durante el procesamiento.</p>
+              </div>
+
+              <!-- Acciones -->
+              <div class="flex flex-col sm:flex-row gap-4 mt-4 pt-6 border-t border-white/5">
+                <button @click="downloadFile(selectedFileForPreview.path)" class="flex-1 bg-primary text-on-primary py-4 rounded-xl font-label-caps tracking-widest flex items-center justify-center gap-3 hover:shadow-[0_0_20px_rgba(0,240,255,0.4)] transition-all active:scale-[0.98]">
+                   <span class="material-symbols-outlined">download</span>
+                   DESCARGAR_ARCHIVO
+                </button>
+                <button @click="selectedFileForPreview = null" class="flex-1 border border-outline-variant hover:bg-white/5 text-on-surface py-4 rounded-xl font-label-caps tracking-widest flex items-center justify-center gap-3 transition-all">
+                   <span class="material-symbols-outlined">cancel</span>
+                   CERRAR_VISUALIZADOR
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <section class="lg:col-span-12 glass-panel rounded-xl p-lg flex flex-col gap-md">
           <h2 class="font-label-caps text-outline flex items-center gap-2 uppercase border-b border-outline-variant/30 pb-3">
@@ -317,21 +472,68 @@
         </section>
       </div>
     </main>
+
+    <!-- Modal de Eliminación Estilo Momichis -->
+    <div v-if="showDeleteModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md p-4">
+      <div class="bg-surface border border-outline/20 p-8 flex flex-col items-center justify-center min-w-[400px] border-t-2 border-t-error rounded-xl shadow-2xl relative">
+        <button v-if="deleteModalState !== 'loading'" @click="showDeleteModal = false" class="absolute top-4 right-4 text-outline hover:text-error transition-colors p-2 hover:bg-white/5 rounded-full">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+        
+        <div class="mb-6 mt-4">
+          <span v-if="deleteModalState === 'confirm'" class="material-symbols-outlined text-6xl text-error drop-shadow-[0_0_8px_rgba(209,77,114,0.5)]">warning</span>
+          <span v-if="deleteModalState === 'loading'" class="material-symbols-outlined text-6xl text-primary animate-spin drop-shadow-[0_0_8px_rgba(33,184,213,0.5)]">settings</span>
+          <span v-if="deleteModalState === 'success'" class="material-symbols-outlined text-6xl text-primary drop-shadow-[0_0_8px_rgba(33,184,213,0.5)]">check_circle</span>
+        </div>
+        
+        <h2 class="text-xl font-header mb-2 text-center">{{ deleteModalTitle }}</h2>
+        <p class="text-outline text-sm text-center mb-8 max-w-sm">{{ deleteModalMessage }}</p>
+        
+        <div v-if="deleteModalState === 'confirm'" class="flex gap-4 w-full">
+          <button @click="showDeleteModal = false" class="flex-1 py-3 px-4 border border-outline/30 text-outline hover:text-on-surface hover:bg-white/5 font-label-caps tracking-widest text-sm transition-all rounded-lg">CANCELAR</button>
+          <button @click="executePendingDelete" class="flex-1 py-3 px-4 bg-error/10 border border-error/50 text-error hover:bg-error hover:text-white font-label-caps tracking-widest text-sm transition-all rounded-lg shadow-[0_0_15px_rgba(209,77,114,0.3)]">CONFIRMAR</button>
+        </div>
+        
+        <div v-if="deleteModalState === 'success'" class="w-full">
+          <button @click="showDeleteModal = false" class="w-full py-3 px-4 bg-primary/10 border border-primary/50 text-primary hover:bg-primary hover:text-white font-label-caps tracking-widest text-sm transition-all rounded-lg shadow-[0_0_15px_rgba(33,184,213,0.3)]">ACEPTAR</button>
+        </div>
+      </div>
+    </div>
+    
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 
 const isUploading = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
 const files = ref<any[]>([])
 
-const activeSection = ref<'sistema' | 'metricas'>('sistema')
+const activeSection = ref<'sistema' | 'metricas' | 'nodos' | 'almacenamiento'>('sistema')
 const showUploadModal = ref(false)
+const selectedFileForPreview = ref<any>(null)
 const activeTask = ref<string>('')
 const watermarkInput = ref<string>('')
 const isDragging = ref(false)
+const ocrFiles = ref<any[]>([])
+const loadingOcr = ref(false)
+
+// Delete Modal State
+const showDeleteModal = ref(false)
+const deleteModalState = ref<'confirm'|'loading'|'success'>('confirm')
+const deleteModalTitle = ref('')
+const deleteModalMessage = ref('')
+let pendingDeleteAction: (() => Promise<void>) | null = null
+
+const executePendingDelete = async () => {
+  if (pendingDeleteAction) {
+    deleteModalState.value = 'loading'
+    deleteModalTitle.value = 'Eliminando Archivos'
+    deleteModalMessage.value = 'Eliminando sus archivos ...'
+    await pendingDeleteAction()
+  }
+}
 
 const openTaskModal = (task: string) => {
   activeTask.value = task
@@ -339,6 +541,10 @@ const openTaskModal = (task: string) => {
   if (task !== 'watermark') {
     watermarkInput.value = ''
   }
+}
+
+const openPreview = (file: any) => {
+  selectedFileForPreview.value = file
 }
 
 const triggerFileInput = () => {
@@ -429,11 +635,143 @@ const fetchFiles = async () => {
   }
 }
 
-const downloadFile = (path: string, name: string) => {
+const downloadFile = (path: string) => {
   window.open(`http://localhost:3000/dropbox/download?path=${encodeURIComponent(path)}`, '_blank')
+}
+
+const fetchOcrFiles = async () => {
+  loadingOcr.value = true
+  try {
+    // Cargar OCR temporales
+    const ocrRes = await fetch('http://localhost:3000/ocr-storage/list')
+    if (!ocrRes.ok) throw new Error('Error cargando OCR')
+    const ocrData = await ocrRes.json()
+    const ocrList = (ocrData || []).map((f: any) => ({
+      ...f,
+      type: 'ocr',
+      displayName: `📄 ${f.filename}`
+    }))
+    
+    // Cargar archivos del sistema
+    const filesRes = await fetch('http://localhost:3000/dropbox/files')
+    if (!filesRes.ok) throw new Error('Error cargando archivos')
+    const filesData = await filesRes.json()
+    const filesList = (filesData.files || []).map((f: any) => ({
+      ...f,
+      type: 'file',
+      displayName: `📦 ${f.name || f.nombre_original || 'Desconocido'}`,
+      fileId: f.id,
+      filename: f.name || f.nombre_original || 'Desconocido',
+      size: f.size || f.tamano_bytes || 0,
+      createdAt: f.client_modified || f.fecha_creacion || new Date().toISOString()
+    }))
+    
+    // Combinar ambas listas
+    ocrFiles.value = [...ocrList, ...filesList]
+  } catch (error) {
+    console.error('Error fetching files:', error)
+    ocrFiles.value = []
+  } finally {
+    loadingOcr.value = false
+  }
+}
+
+const viewOcrFile = async (fileId: string, filename: string) => {
+  try {
+    const res = await fetch(`http://localhost:3000/ocr-storage/file/${fileId}`)
+    if (!res.ok) throw new Error('Error cargando archivo')
+    const data = await res.json()
+    alert(`📄 ${filename}\n\n${data.content?.substring(0, 500)}...\n\n(Mostrando primeros 500 caracteres)`)
+  } catch (error) {
+    console.error('Error viewing file:', error)
+    alert('Error al cargar el archivo')
+  }
+}
+
+const deleteOcrFile = (fileId: string, filename: string, type: string) => {
+  deleteModalState.value = 'confirm'
+  deleteModalTitle.value = 'Confirmar Eliminación'
+  deleteModalMessage.value = `¿Estás seguro de que deseas eliminar permanentemente el archivo "${filename}"? Esta acción no se puede deshacer.`
+  showDeleteModal.value = true
+
+  pendingDeleteAction = async () => {
+    try {
+      if (type === 'ocr') {
+        const res = await fetch(`http://localhost:3000/ocr-storage/file/${fileId}`, { method: 'DELETE' })
+        const data = await res.json()
+        if (data.success) {
+          ocrFiles.value = ocrFiles.value.filter(f => f.fileId !== fileId)
+          deleteModalState.value = 'success'
+          deleteModalTitle.value = 'Operación Exitosa'
+          deleteModalMessage.value = 'Archivos eliminados correctamente.'
+        }
+      } else if (type === 'file') {
+        const res = await fetch(`http://localhost:3000/dropbox/file/${fileId}`, { method: 'DELETE' })
+        const data = await res.json()
+        if (data.ok) {
+          ocrFiles.value = ocrFiles.value.filter(f => f.fileId !== fileId)
+          deleteModalState.value = 'success'
+          deleteModalTitle.value = 'Operación Exitosa'
+          deleteModalMessage.value = 'Archivos eliminados correctamente.'
+        } else {
+          showDeleteModal.value = false
+          alert('Error: ' + data.message)
+        }
+      }
+    } catch (error) {
+      console.error('Error deleting file:', error)
+      showDeleteModal.value = false
+      alert('Error al eliminar el archivo')
+    }
+  }
+}
+
+const deleteAllOcrFiles = () => {
+  deleteModalState.value = 'confirm'
+  deleteModalTitle.value = 'Purga Total de Sistema'
+  deleteModalMessage.value = '¿Eliminar TODOS los archivos del sistema? Esta acción purgará la base de datos y la nube irremediablemente.'
+  showDeleteModal.value = true
+
+  pendingDeleteAction = async () => {
+    try {
+      // Eliminar OCR temporales
+      const ocrRes = await fetch('http://localhost:3000/ocr-storage/cleanup', { method: 'DELETE' })
+      await ocrRes.json()
+      
+      // Eliminar archivos del sistema
+      const ocrFilesCopy = [...ocrFiles.value]
+      for (const file of ocrFilesCopy) {
+        if (file.type === 'file') {
+          try {
+            await fetch(`http://localhost:3000/dropbox/file/${file.fileId}`, { method: 'DELETE' })
+          } catch (error) {
+            console.warn(`Error eliminando archivo ${file.filename}:`, error)
+          }
+        }
+      }
+      
+      ocrFiles.value = []
+      deleteModalState.value = 'success'
+      deleteModalTitle.value = 'Purga Exitosa'
+      deleteModalMessage.value = 'Archivos eliminados correctamente.'
+    } catch (error) {
+      console.error('Error cleaning up:', error)
+      showDeleteModal.value = false
+      alert('Error al limpiar archivos')
+    }
+  }
 }
 
 onMounted(() => {
   fetchFiles()
+  if (activeSection.value === 'almacenamiento') {
+    fetchOcrFiles()
+  }
+})
+
+watch(activeSection, (newSection) => {
+  if (newSection === 'almacenamiento') {
+    fetchOcrFiles()
+  }
 })
 </script>

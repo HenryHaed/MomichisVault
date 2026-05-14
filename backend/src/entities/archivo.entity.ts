@@ -48,6 +48,15 @@ export class Archivo {
   @CreateDateColumn({ name: 'fecha_creacion' })
   fechaCreacion: Date;
 
+  @Column({ type: 'text', name: 'resumen_ia', nullable: true })
+  resumenIa: string | null;
+
+  @Column({ name: 'ruta_almacenamiento', nullable: true })
+  rutaAlmacenamiento: string;
+
+  @Column({ name: 'ocr_file_id', nullable: true, type: 'varchar' })
+  ocrFileId: string | null;
+
   @OneToMany(() => TareaProcesamiento, (tarea) => tarea.archivoOrigen)
   tareasGeneradas: TareaProcesamiento[];
 }

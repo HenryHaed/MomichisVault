@@ -60,7 +60,30 @@ La API cuenta con todo lo necesario para interactuar con la Base de Datos median
    DB_DATABASE=carpeta_magica
    ```
 
-3. **Migraciones:** Ejecuta el comando de TypeORM para generar las primeras tablas e inicializar la estructura según el código.
+3. Configura Dropbox (requerido para webhooks y procesamiento automatico):
+    - Crea una app en Dropbox Developer Console.
+    - Define el redirect URL: `http://localhost:3000/dropbox/oauth/callback`.
+    - Copia el App Key y App Secret en tu `.env`:
+       ```env
+       DROPBOX_APP_KEY=tu_app_key
+       DROPBOX_APP_SECRET=tu_app_secret
+       DROPBOX_REDIRECT_URL=http://localhost:3000/dropbox/oauth/callback
+       ```
+    - Autoriza la app abriendo: `http://localhost:3000/dropbox/auth`
+    - Si quieres guardar el token manualmente:
+       ```bash
+       curl -X POST http://localhost:3000/dropbox/token \
+          -H "Content-Type: application/json" \
+          -d '{"accountId":"dbid:...","accessToken":"<TOKEN>","refreshToken":"<REFRESH>"}'
+       ```
+    - Configura las carpetas de entrada/salida con sus IDs:
+       ```bash
+       curl -X POST http://localhost:3000/dropbox/config \
+          -H "Content-Type: application/json" \
+          -d '{"entradaFolderId":"<ID_ENTRADA>","salidaFolderId":"<ID_SALIDA>"}'
+       ```
+
+4. **Migraciones:** Ejecuta el comando de TypeORM para generar las primeras tablas e inicializar la estructura según el código.
    *(Nota: Asegúrate de que las migraciones se generen primero tomando como base el código en TypeScript).*
    ```bash
    # 1. Generar la migración principal (Leer entidades a un archivo .ts)
@@ -70,7 +93,7 @@ La API cuenta con todo lo necesario para interactuar con la Base de Datos median
    npm run migration:run
    ```
 
-4. **Datos Semilla (Seeding):** Crea la configuración básica inicial que incluye:
+5. **Datos Semilla (Seeding):** Crea la configuración básica inicial que incluye:
    - Un Administrador de Prueba (`admin@carpetamagica.com`).
    - Dos carpetas tipo (1 `Entrada Mágica`, 1 `Salida Procesada`).
    - Configuración dummy de cuenta cloud (Ej. Dropbox).
@@ -80,7 +103,7 @@ La API cuenta con todo lo necesario para interactuar con la Base de Datos median
    npm run seed
    ```
 
-5. **Iniciar el backend:**
+6. **Iniciar el backend:**
    ```bash
    npm run start:dev
    ```
@@ -111,4 +134,19 @@ El frontend contiene la interfaz de usuario con Typecript. Podrás ver los resul
 Credenciales del usuario seed:
 
 - Email: admin@carpetamagica.com
-- Contrasena: MomichisVault123!
+- Contrasena: MomichisVault123! 
+
+
+Detalles de la clave de API
+Clave de API
+AIzaSyBsX8gqjw7ONmUmdhknjWkyouYzJOB5rf8
+
+Nombre
+Gemini API Key
+
+Nombre del proyecto
+projects/664953605371
+
+Número del proyecto
+664953605371
+

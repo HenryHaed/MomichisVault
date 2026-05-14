@@ -1,0 +1,113 @@
+
+
+Universidad del Bicentenario de Bolivia 
+(1825 – 2025) 
+ A: M.Sc. Aldo Ramiro Valdez Alvarado 
+  DECANO 
+  Facultad de Ciencias Puras y Naturales 
+VÍA:  Lic. Jesús Reynaldo Pérez Benavides 
+   Coordinador TIC  
+  Facultad de Ciencias Puras y Naturales  
+ NOMBRE DEL RESPONSABLE DEL INFORME: 
+  Dai Henry Aguilar Estrada 
+   Pasante 
+ FECHA PRESENTACIÓN INFORME: 06/04/2026 
+ Nro. DE INFORME: 1 
+ ACTIVIDADES REPORTADAS POR MES DE: Marzo – 2026 
+ 
+Mediante  el  presente  informe  detallo  las  actividades  realizadas  dentro  de  la  unidad  de 
+Tecnología de la Información y Comunicación de la Facultad de Ciencias Puras y Naturales 
+como Pasante, desde la fecha 1 de Marzo de 2026 al 30 de Marzo de 2026. 
+ACTIVIDADES DETALLADAS DEL MES 
+Resumen de Actividades por Semana 
+Semana 1: Cimientos y Estructura Base 
+En esta fase nos enfocamos en establecer la infraestructura sólida sobre la cual crecería 
+el sistema. 
+Backend (NestJS): 
+• Inicialización del proyecto con arquitectura modular. 
+• Configuración de la conexión a base de 
+datos PostgreSQL mediante TypeORM. 
+• Definición de entidades 
+principales: Usuario, Role, Facultad, Carrera y Categoria. 
+Frontend (Vue 3 + Vite): 
+• Configuración inicial del entorno de desarrollo. 
+• Integración de Vuetify 3 para componentes Material Design. 
+• Definición de la paleta de colores institucional (Azul UMSA/Guindo) 
+y texturas andinas. 
+• DevOps: Configuración de variables de entorno globales. 
+Semana 2: Autenticación y Gestión de Catálogos 
+El objetivo fue asegurar el sistema y permitir la carga de información administrativa 
+básica. 
+
+Universidad del Bicentenario de Bolivia 
+(1825 – 2025) 
+Backend: 
+• Implementación de seguridad con Passport JWT (JSON Web Tokens). 
+• Sistema de Roles y Permisos (RBAC): Admin, Jurado, Delegado, 
+Superusuario. 
+• Desarrollo de CRUDs para Instituciones Externas y Facultades/Carreras. 
+Frontend: 
+• Diseño y desarrollo de la Landing Page responsiva (inspirada en la 
+identidad visual de la UMSA). 
+• Creación de la interfaz de Login con validación de campos. 
+• Implementación de Pinia para la gestión del estado global (sesión del 
+usuario). 
+Semana 3: Módulos de Fraternidades y Sistema de Calificación 
+Entramos en la lógica de negocio específica del evento universitario. 
+Backend: 
+• Módulo de Gestión de Fraternidades: Registro dinámico según categorías 
+(A, B, C). 
+• Desarrollo del motor de Calificación Inteligente: Lógica de puntuación por 
+fases (Entrada y Monografía). 
+• Endpoints específicos para la descarga de datos y listados por filtros. 
+Frontend: 
+• Dashboard administrativo principal con navegación lateral. 
+• Integración del Mapa Interactivo mediante un modal para geolocalización 
+del evento. 
+• Sincronización del CRUD de fraternidades con las tablas visuales de 
+administración. 
+Semana 4: Pulido, Documentación y Preparación Final 
+Fase actual de refinamiento visual, usabilidad y entrega técnica. 
+Backend: 
+• Implementación de Swagger para documentación automática de la API. 
+• Creación de un Script de Semilla (Seed) completo para poblar la base de 
+datos con un clic (incluye usuarios de prueba). 
+• Optimización de consultas y manejo de imágenes (uploads). 
+Frontend: 
+• Desarrollo del Modal del Top 10 Ranking: Visualización dinámica de los 
+mejores puntajes. 
+
+Universidad del Bicentenario de Bolivia 
+(1825 – 2025) 
+• Interfaz del "Wizard de Evaluación" para el jurado (calificación rápida en 
+tiempo real). 
+• Ajustes finales de diseño (logos institucionales, iconos y micro-
+animaciones). 
+• Documentación General: 
+• Creación de guías técnicas (READMEs) detalladas para desarrolladores. 
+• Configuración de seguridad en Git con un .gitignore profesional. 
+Estado Tecnológico Actual 
+Componente Tecnologías Utilizadas 
+Backend NestJS, TypeORM, PostgreSQL, JWT, Swagger, Bcryptjs. 
+Frontend Vue 3, Vite, Pinia, Vuetify 3, Axios, Vue Router. 
+Diseño 
+Material Design, CSS Personalizado (Paleta UMSA), Activos 
+Multimedios. 
+Infraestructura Entorno Node.js, Gestión de variables de entorno (.env). 
+ 
+NOTE 
+El proyecto se encuentra en un estado funcional donde el Backend provee una API 
+documentada y estable, mientras el Frontend ofrece una experiencia de usuario premium 
+lista para operación. 
+ 
+Es todo en cuanto tengo a bien informar a su persona para fines consiguientes. 
+ 
+ 
+ 
+Dai Henry Aguilar Estrada 
+PASANTE 
+ TIC-FCPN 
+Lic. Jesús Reynaldo Pérez Benavides 
+COORDINADOR 
+TIC-FCPN 
+ 

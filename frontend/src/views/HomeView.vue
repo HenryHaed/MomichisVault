@@ -63,7 +63,7 @@ import Typewriter from '@/components/Typewriter.vue'
       </div>
     </nav>
     <!-- Main Content Canvas -->
-    <main class="flex-1 md:ml-64 pt-20 md:pt-0 min-h-screen flex flex-col relative">
+    <main class="flex-1 md:ml-64 pt-20 md:pt-0 min-h-screen flex flex-col relative w-full">
       <!-- Background Decorative Elements -->
       <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div class="absolute top-[-10%] left-[-10%] w-1/2 h-1/2 bg-primary-container/5 blur-[120px] rounded-full"></div>
@@ -78,7 +78,7 @@ import Typewriter from '@/components/Typewriter.vue'
             <span class="w-2 h-2 rounded-full bg-primary-container shadow-[0_0_8px_rgba(0,240,255,0.8)]"></span>
             <span class="font-mono-data text-mono-data text-primary-container"><Typewriter text="SISTEMA.EN_LÍNEA // PROTOCOLO_4.4" :speed="60" /></span>
           </div>
-          <h1 class="font-headline-xl text-headline-xl text-on-background max-w-none tracking-tight leading-tight">
+          <h1 class="font-headline-xl text-4xl md:text-5xl lg:text-6xl text-on-background max-w-none tracking-tight leading-tight">
             Seguridad Absoluta.<br/>
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary-container to-secondary-container neon-text">Rendimiento Cuántico.</span>
           </h1>
@@ -96,7 +96,7 @@ import Typewriter from '@/components/Typewriter.vue'
             </button>
           </div>
           </div>
-          <div class="glass-panel p-lg rounded-xl flex flex-col gap-md relative overflow-hidden">
+          <div class="glass-panel p-lg rounded-xl flex flex-col gap-md relative overflow-hidden self-start w-full">
             <div class="flex justify-between items-center mb-4 z-10">
               <span class="font-label-caps text-label-caps text-on-surface-variant">ESTADO DEL SISTEMA</span>
               <span class="flex items-center gap-1 font-mono-data text-mono-data text-primary-container"><span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span> <Typewriter text="ÓPTIMO" :delay="1200" :speed="80" /></span>

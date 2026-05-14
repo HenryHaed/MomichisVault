@@ -52,9 +52,9 @@ const handleLogin = async () => {
     </div>
     
     <!-- Login Card (Fixing width constraints to avoid collapse) -->
-    <div class="relative z-10 w-[440px] max-w-[90vw] p-8 md:p-10 bg-surface-container/40 backdrop-blur-[20px] rounded-xl border border-white/10 shadow-[0_0_30px_rgba(0,240,255,0.05)] border-t-[rgba(255,255,255,0.2)] border-l-[rgba(255,255,255,0.1)]">
+    <div class="relative z-10 w-[440px] max-w-[90vw] p-8 md:p-10 bg-surface-container/40 backdrop-blur-[20px] rounded-xl border border-white/10 shadow-[0_0_30px_rgba(0,240,255,0.05)] border-t-[rgba(255,255,255,0.2)] border-l-[rgba(255,255,255,0.1)] shrink-0">
       <!-- Header -->
-      <div class="text-center mb-8">
+      <div class="text-center mb-8 flex flex-col items-center">
         <span class="material-symbols-outlined text-[48px] text-surface-tint drop-shadow-[0_0_8px_rgba(0,219,233,0.5)] mb-4 block animate-pulse">
           enhanced_encryption
         </span>
@@ -65,7 +65,7 @@ const handleLogin = async () => {
       </div>
       
       <!-- Form -->
-      <form class="flex flex-col gap-6" @submit.prevent="handleLogin">
+      <form class="flex flex-col gap-6 w-full" @submit.prevent="handleLogin">
         <!-- Core ID Input -->
         <div class="relative">
           <label class="sr-only" for="core-id">Usuario / Correo</label>
