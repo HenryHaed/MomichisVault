@@ -78,14 +78,52 @@
         </div>
       </header>
 
-      <!-- SECCION: NODOS DE SEGURIDAD (Trafico) -->
+      <!-- SECCION: NODOS DE SEGURIDAD (Trafico / Boveda) -->
       <div v-show="activeSection === 'nodos'" class="flex flex-col gap-6 slide-in-top">
+         
+         <!-- Boveda Cifrada (ISO 27001) -->
+         <div class="glass-panel p-8 rounded-xl border border-secondary/20 shadow-[0_0_30px_rgba(209,77,114,0.05)] relative overflow-hidden flex flex-col md:flex-row gap-8 items-center">
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiPjwvcmVjdD4KPHBhdGggZD0iTTAgMEw4IDhaTTAgOEw4IDBaIiBzdHJva2U9IiMxMTIiIHN0cm9rZS1vcGFjaXR5PSIwLjEiIHN0cm9rZS13aWR0aD0iMSI+PC9wYXRoPgo8L3N2Zz4=')] opacity-20 pointer-events-none"></div>
+            
+            <div class="flex-shrink-0 relative">
+               <span class="material-symbols-outlined text-border-secondary text-8xl text-secondary animate-[pulse_3s_ease-in-out_infinite] drop-shadow-[0_0_15px_rgba(209,77,114,0.6)]" style="font-variation-settings: 'FILL' 1;">enhanced_encryption</span>
+               <div class="absolute inset-0 border-4 border-secondary rounded-full border-t-transparent animate-spin opacity-50"></div>
+            </div>
+            <div class="flex-1 z-10">
+               <div class="flex items-center gap-2 mb-2">
+                 <h2 class="font-headline-md text-secondary tracking-widest uppercase font-bold">Bóveda Cifrada de Acceso</h2>
+                 <span class="px-2 py-0.5 bg-secondary/20 text-secondary text-[10px] font-mono-data rounded border border-secondary/50">PROTECTED</span>
+               </div>
+               <p class="text-xs font-mono-data text-outline mb-4">COMPLIANCE: ISO/IEC 27001 (SGSI - Sistema de Gestión de Seguridad de la Información)</p>
+               <p class="font-body-md text-on-surface-variant text-sm mb-4">
+                 Todos los vectores de entrada están siendo encriptados bajo AES-256 en reposo. Los canales de autenticación del Nexus Grid operan bajo validación de tokens de corta vida con rotación automática mediante los lineamientos de controles de acceso ISO 27001.
+               </p>
+               <div class="grid grid-cols-3 gap-2">
+                  <div class="bg-black/40 border border-secondary/20 p-2 rounded text-center">
+                     <span class="text-[10px] font-label-caps text-outline block mb-1">LLAVES ROTADAS</span>
+                     <span class="font-mono-data text-secondary text-sm">45,912</span>
+                  </div>
+                  <div class="bg-black/40 border border-secondary/20 p-2 rounded text-center">
+                     <span class="text-[10px] font-label-caps text-outline block mb-1">INTENTOS BLOQUEADOS</span>
+                     <span class="font-mono-data text-error text-sm animate-pulse">1,204</span>
+                  </div>
+                  <div class="bg-black/40 border border-secondary/20 p-2 rounded text-center">
+                     <span class="text-[10px] font-label-caps text-outline block mb-1">INTEGRIDAD HASH</span>
+                     <span class="font-mono-data text-green-400 text-sm">SHA-3 OK</span>
+                  </div>
+               </div>
+            </div>
+         </div>
+
          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Animacion Falsa de Trafico -->
+            <!-- Animacion Falsa de Trafico (ISO 27036) -->
             <div class="glass-panel p-8 rounded-xl border border-primary/20 shadow-[0_0_30px_rgba(0,240,255,0.05)] relative overflow-hidden flex flex-col gap-4">
                <div class="flex items-center gap-2 border-b border-outline-variant/30 pb-2">
                  <span class="material-symbols-outlined text-secondary animate-pulse">radar</span>
-                 <h2 class="font-label-caps text-outline uppercase tracking-widest">Monitoreo de Tráfico Activo</h2>
+                 <div>
+                    <h2 class="font-label-caps text-outline uppercase tracking-widest">Monitoreo de Tráfico Activo</h2>
+                    <p class="text-[10px] font-mono-data text-primary">COMPLIANCE: ISO/IEC 27036 (Seg. de la Información para Relaciones con Proveedores)</p>
+                 </div>
                </div>
                
                <div class="h-48 w-full bg-black/40 rounded border border-outline-variant/50 relative overflow-hidden flex items-end px-2 pt-2 gap-1" >
@@ -96,6 +134,11 @@
                  ></div>
                  <div class="absolute inset-0 bg-gradient-to-t from-primary/10 to-transparent pointer-events-none"></div>
                  <div class="absolute w-full h-[1px] bg-primary/50 top-1/2 left-0 shadow-[0_0_10px_rgba(0,240,255,0.8)]"></div>
+                 
+                 <!-- Tooltip Falso del Proveedor -->
+                 <div class="absolute top-2 right-2 bg-black/80 border border-primary/30 p-1.5 rounded flex items-center gap-2 text-[10px] font-mono-data text-primary">
+                    <div class="w-2 h-2 bg-green-500 rounded-full animate-ping"></div> DROPBOX API v2 CONN (SECURE)
+                 </div>
                </div>
 
                <div class="flex justify-between items-center mt-2 px-2 text-xs font-mono-data text-outline">
@@ -113,13 +156,13 @@
                </div>
 
                <p class="font-body-md text-on-surface-variant text-sm mt-4">
-                 Genera un reporte detallado con toda la actividad de subida, tamaño de origen y fecha exacta en la base de datos de auditoría.
+                 Genera un reporte detallado con toda la actividad de subida, tamaño de origen y fecha exacta en la base de datos de auditoría. Cumple los estándares exigidos para el trazado forense perimetral.
                </p>
 
                <div class="mt-auto flex flex-col gap-2 items-start bg-black/30 p-4 rounded-lg border border-outline-variant/30">
                   <div class="flex items-center gap-2 text-xs text-on-surface font-mono-data mb-2">
                     <span class="material-symbols-outlined text-sm text-green-400">check_circle</span>
-                    SISTEMA DE LOGS EN LINEA
+                    SISTEMA DE LOGS EN LINEA (RFC 5424)
                   </div>
                   <button @click="downloadReport" class="mt-2 bg-tertiary text-on-primary px-6 py-3 rounded-DEFAULT font-label-caps tracking-widest hover:shadow-[0_0_15px_rgba(255,100,200,0.4)] transition-all flex items-center gap-2 cursor-pointer w-full justify-center">
                     <span class="material-symbols-outlined">picture_as_pdf</span>
@@ -212,7 +255,46 @@
                </div>
                <div class="bg-tertiary/5 p-4 rounded-lg border border-tertiary/20 flex flex-col gap-2">
                   <p class="text-xs text-on-surface-variant font-label-caps">PROMEDIO POR ARCHIVO</p>
-                  <p class="text-2xl font-headline-md text-tertiary">{{ formatBytes(ocrFiles.reduce((sum: number, f: any) => sum + f.size, 0) / ocrFiles.length) }}</p>
+                  <p class="text-2xl font-headline-md text-tertiary">{{ ocrFiles.length > 0 ? formatBytes(ocrFiles.reduce((sum: number, f: any) => sum + f.size, 0) / ocrFiles.length) : '0 B' }}</p>
+               </div>
+            </div>
+         </div>
+
+         <!-- Pantalla Muerta Animada: Gobernanza de Datos ISO 38500 -->
+         <div class="glass-panel p-8 rounded-xl border border-primary/20 shadow-[0_0_30px_rgba(0,240,255,0.05)] relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
+            <div class="flex items-center gap-2 border-b border-outline-variant/30 pb-4 mb-6">
+               <span class="material-symbols-outlined text-primary text-2xl animate-[spin_10s_linear_infinite]">mediation</span>
+               <div>
+                  <h2 class="font-label-caps text-outline uppercase tracking-widest text-lg">Gobernanza de Almacenamiento</h2>
+                  <p class="text-xs font-mono-data text-primary">COMPLIANCE: ISO/IEC 38500</p>
+               </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+               <div class="flex flex-col gap-3">
+                  <div class="flex justify-between text-xs font-mono-data text-outline"><span>Auditoría Interna</span> <span class="text-primary text-green-400">PASSED</span></div>
+                  <div class="h-2 bg-black/50 rounded overflow-hidden"><div class="h-full bg-green-500 w-full"></div></div>
+                  <p class="text-xs text-on-surface-variant mt-2">Cumplimiento del marco de gobierno corporativo de TI. Distribución y evaluación de políticas de datos estructuradas.</p>
+               </div>
+               <div class="flex flex-col gap-3 border-l border-outline-variant/30 pl-6">
+                  <div class="flex justify-between text-xs font-mono-data text-outline"><span>Integridad del Cluster</span> <span class="text-secondary animate-pulse">EVALUANDO...</span></div>
+                  <div class="h-2 bg-black/50 rounded overflow-hidden relative">
+                     <div class="absolute top-0 bottom-0 left-0 bg-secondary/80 animate-[ping_2s_ease-in-out_infinite] w-3/4"></div>
+                     <div class="h-full bg-secondary w-3/4"></div>
+                  </div>
+                  <p class="text-xs text-on-surface-variant mt-2">Distribución de carga (Directiva 38500-2). Asegurando disponibilidad continua.</p>
+               </div>
+               <div class="flex flex-col gap-3 border-l border-outline-variant/30 pl-6">
+                  <div class="flex justify-between text-xs font-mono-data text-outline"><span>Ciclo de Vida (Datos)</span> <span class="text-tertiary">ACTIVO</span></div>
+                  <div class="flex items-center gap-1 mt-2">
+                     <div class="h-4 w-4 rounded-full border border-tertiary flex items-center justify-center animate-pulse"><div class="h-2 w-2 rounded-full bg-tertiary"></div></div>
+                     <div class="h-[1px] flex-1 bg-tertiary/30"></div>
+                     <div class="h-4 w-4 rounded-full border border-tertiary flex items-center justify-center animate-pulse" style="animation-delay: 0.5s"><div class="h-2 w-2 rounded-full bg-tertiary"></div></div>
+                     <div class="h-[1px] flex-1 bg-tertiary/30"></div>
+                     <div class="h-4 w-4 rounded-full border border-tertiary flex items-center justify-center animate-pulse" style="animation-delay: 1s"><div class="h-2 w-2 rounded-full bg-tertiary"></div></div>
+                  </div>
+                  <p class="text-xs text-on-surface-variant mt-[5px]">Gestión del riesgo en la destrucción/retención temporal del ciclo de vida.</p>
                </div>
             </div>
          </div>
