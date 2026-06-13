@@ -76,12 +76,20 @@ export class DropboxController {
   async uploadFile(
     @UploadedFile() file: any,
     @Body('task') task?: string,
-    @Body('watermarkText') watermarkText?: string
+    @Body('watermarkText') watermarkText?: string,
+    @Body('watermarkColor') watermarkColor?: string,
+    @Body('watermarkBold') watermarkBold?: string,
+    @Body('watermarkItalic') watermarkItalic?: string
   ) {
     if (!file) {
       return { ok: false, message: 'Ningún archivo enviado' };
     }
-    return this.dropboxService.processAndUpload(file.buffer, file.originalname, task, watermarkText);
+    const watermarkOptions = {
+      color: watermarkColor || '#ffffff',
+      bold: watermarkBold === 'true',
+      italic: watermarkItalic === 'true'
+    };
+    return this.dropboxService.processAndUpload(file.buffer, file.originalname, task, watermarkText, watermarkOptions);
   }
 
   @Get('files')

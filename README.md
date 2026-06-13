@@ -134,19 +134,8 @@ El frontend contiene la interfaz de usuario con Typecript. Podrás ver los resul
 Credenciales del usuario seed:
 
 - Email: admin@carpetamagica.com
-- Contrasena: MomichisVault123! 
+- Contrasena: password123 
 
 
-Detalles de la clave de API
-Clave de API
-AIzaSyBsX8gqjw7ONmUmdhknjWkyouYzJOB5rf8
 
-Nombre
-Gemini API Key
-
-Nombre del proyecto
-projects/664953605371
-
-Número del proyecto
-664953605371
 

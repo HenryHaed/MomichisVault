@@ -20,7 +20,7 @@ async function runSeed() {
     console.log('🧹 Base de datos limpiada (TRUNCATE).');
 
     // 2. Crear un usuario de prueba
-    const adminPassword = 'MomichisVault123!';
+    const adminPassword = 'password123';
     const adminPasswordHash = await bcrypt.hash(adminPassword, 10);
     const admin = usuarioRepository.create({
       correoElectronico: 'admin@carpetamagica.com',

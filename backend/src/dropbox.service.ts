@@ -319,7 +319,7 @@ export class DropboxService {
     return new Dropbox({ accessToken });
   }
 
-  async processAndUpload(fileBuffer: Buffer, filename: string, task?: string, customWatermark?: string) {
+  async processAndUpload(fileBuffer: Buffer, filename: string, task?: string, customWatermark?: string, watermarkOptions?: { color: string; bold: boolean; italic: boolean }) {
     const dbx = await this.getValidDbxClient();
     
     // Obtenemos las carpetas base del admin
@@ -365,7 +365,7 @@ export class DropboxService {
     if (task === 'webp' && isImage) {
       outputFilename = await this.processImage(dbx, fileBuffer, filename, pathSalidaBase, false);
     } else if (task === 'watermark' && isImage) {
-      outputFilename = await this.processImage(dbx, fileBuffer, filename, pathSalidaBase, true, customWatermark);
+      outputFilename = await this.processImage(dbx, fileBuffer, filename, pathSalidaBase, true, customWatermark, watermarkOptions);
     } else if (task === 'ocr' && extension === 'pdf') {
        const result = await this.processPdf(dbx, fileBuffer, filename, pathSalidaBase);
        outputFilename = result.outputName;
@@ -627,7 +627,7 @@ export class DropboxService {
     }
   }
 
-  private async processImage(dbx: Dropbox, fileBuffer: Buffer, filename: string, salidaFolderId: string, addWatermark: boolean = true, customWatermark?: string) {
+  private async processImage(dbx: Dropbox, fileBuffer: Buffer, filename: string, salidaFolderId: string, addWatermark: boolean = true, customWatermark?: string, watermarkOptions?: { color: string; bold: boolean; italic: boolean }) {
     const webpBuffer = await sharp(fileBuffer).webp({ quality: 80 }).toBuffer();
     
     let finalBuffer = webpBuffer;
@@ -639,10 +639,26 @@ export class DropboxService {
       const height = metadata.height || 200;
 
       const watermarkText = customWatermark || 'Momichis Vault';
+      const watermarkColor = watermarkOptions?.color || '#ffffff';
+      const isBold = watermarkOptions?.bold || false;
+      const isItalic = watermarkOptions?.italic || false;
+      
+      const fontWeight = isBold ? 'bold' : 'normal';
+      const fontStyle = isItalic ? 'italic' : 'normal';
+      const fontSize = Math.max(20, Math.floor(width / 15));
+      
+      // Convertir hex a rgba para semi-transparencia
+      const hexToRgba = (hex: string, alpha: number = 0.7) => {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `rgba(${r},${g},${b},${alpha})`;
+      };
+
       const watermarkSvg = `
         <svg width="${width}" height="${height}">
           <style>
-            .text { fill: rgba(255,255,255,0.6); font-size: ${Math.max(20, Math.floor(width/15))}px; font-family: Arial, sans-serif; font-weight: bold; }
+            .text { fill: ${hexToRgba(watermarkColor)}; font-size: ${fontSize}px; font-family: Arial, sans-serif; font-weight: ${fontWeight}; font-style: ${fontStyle}; }
           </style>
           <text x="20" y="${height - 20}" class="text">${watermarkText}</text>
         </svg>
