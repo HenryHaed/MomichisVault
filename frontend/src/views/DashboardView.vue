@@ -350,12 +350,51 @@
 
             <div class="flex flex-col gap-6 max-h-[70vh] overflow-y-auto pr-2">
                <!-- Input Text (Solo para marca de Agua) -->
-               <div v-if="activeTask === 'watermark'" class="flex flex-col gap-3">
-                 <label class="font-label-caps text-xs text-primary/80 tracking-widest flex items-center gap-2">
-                    <span class="material-symbols-outlined text-sm">edit_note</span>
-                    TEXTO DE TU MARCA DE AGUA:
-                 </label>
-                 <input type="text" v-model="watermarkInput" placeholder="Ej. Propiedad de Acme Inc." class="bg-black/40 border border-outline-variant rounded-lg p-5 text-on-surface font-body-md focus:outline-none focus:border-secondary transition-all focus:ring-1 focus:ring-secondary/50 placeholder:text-outline/40" />
+               <div v-if="activeTask === 'watermark'" class="flex flex-col gap-4">
+                 <div class="flex flex-col gap-3">
+                   <label class="font-label-caps text-xs text-primary/80 tracking-widest flex items-center gap-2">
+                      <span class="material-symbols-outlined text-sm">edit_note</span>
+                      TEXTO DE TU MARCA DE AGUA:
+                   </label>
+                   <input type="text" v-model="watermarkInput" placeholder="Ej. Propiedad de Acme Inc." class="bg-black/40 border border-outline-variant rounded-lg p-5 text-on-surface font-body-md focus:outline-none focus:border-secondary transition-all focus:ring-1 focus:ring-secondary/50 placeholder:text-outline/40" />
+                 </div>
+
+                 <div class="flex flex-col gap-3">
+                   <label class="font-label-caps text-xs text-primary/80 tracking-widest flex items-center gap-2">
+                      <span class="material-symbols-outlined text-sm">palette</span>
+                      COLOR DE LA MARCA:
+                   </label>
+                   <div class="flex items-center gap-3">
+                     <input type="color" v-model="watermarkColor" class="h-12 w-12 rounded-lg cursor-pointer border border-outline-variant" />
+                     <span class="font-mono-data text-xs text-on-surface-variant">{{ watermarkColor.toUpperCase() }}</span>
+                   </div>
+                 </div>
+
+                 <div class="flex flex-col gap-3">
+                   <label class="font-label-caps text-xs text-primary/80 tracking-widest">ESTILOS DE TEXTO:</label>
+                   <div class="flex gap-3">
+                     <button 
+                        @click="watermarkBold = !watermarkBold"
+                        :class="[watermarkBold ? 'bg-secondary text-on-primary border-secondary' : 'bg-black/40 border-outline-variant text-on-surface hover:border-secondary/50']"
+                        class="flex-1 border rounded-lg p-3 font-label-caps tracking-widest text-sm transition-all flex items-center justify-center gap-2"
+                     >
+                        <span class="material-symbols-outlined text-lg" :style="watermarkBold ? 'font-variation-settings: \'FILL\' 1;' : ''">format_bold</span>
+                        NEGRITA
+                     </button>
+                     <button 
+                        @click="watermarkItalic = !watermarkItalic"
+                        :class="[watermarkItalic ? 'bg-tertiary text-on-primary border-tertiary' : 'bg-black/40 border-outline-variant text-on-surface hover:border-tertiary/50']"
+                        class="flex-1 border rounded-lg p-3 font-label-caps tracking-widest text-sm transition-all flex items-center justify-center gap-2"
+                     >
+                        <span class="material-symbols-outlined text-lg" :style="watermarkItalic ? 'font-variation-settings: \'FILL\' 1;' : ''">format_italic</span>
+                        ITÁLICA
+                     </button>
+                   </div>
+                   <div class="bg-black/30 p-4 rounded-lg border border-white/5 flex items-center gap-3">
+                     <span class="text-xs text-on-surface-variant font-mono-data">VISTA PREVIA:</span>
+                     <span :style="{ color: watermarkColor, fontWeight: watermarkBold ? 'bold' : 'normal', fontStyle: watermarkItalic ? 'italic' : 'normal' }" class="font-body-md">{{ watermarkInput || 'Tu marca aquí' }}</span>
+                   </div>
+                 </div>
                </div>
 
               <!-- Upload Area -->
@@ -597,6 +636,9 @@ const showUploadModal = ref(false)
 const selectedFileForPreview = ref<any>(null)
 const activeTask = ref<string>('')
 const watermarkInput = ref<string>('')
+const watermarkColor = ref<string>('#ffffff')
+const watermarkBold = ref<boolean>(false)
+const watermarkItalic = ref<boolean>(false)
 const isDragging = ref(false)
 const ocrFiles = ref<any[]>([])
 const loadingOcr = ref(false)
@@ -622,6 +664,9 @@ const openTaskModal = (task: string) => {
   showUploadModal.value = true
   if (task !== 'watermark') {
     watermarkInput.value = ''
+    watermarkColor.value = '#ffffff'
+    watermarkBold.value = false
+    watermarkItalic.value = false
   }
 }
 
@@ -678,6 +723,9 @@ const processUpload = async (file: File) => {
 
   if (activeTask.value === 'watermark' && watermarkInput.value) {
      formData.append('watermarkText', watermarkInput.value)
+     formData.append('watermarkColor', watermarkColor.value)
+     formData.append('watermarkBold', watermarkBold.value.toString())
+     formData.append('watermarkItalic', watermarkItalic.value.toString())
   }
 
   try {
@@ -691,6 +739,9 @@ const processUpload = async (file: File) => {
       showUploadModal.value = false
       activeTask.value = ''
       watermarkInput.value = ''
+      watermarkColor.value = '#ffffff'
+      watermarkBold.value = false
+      watermarkItalic.value = false
       activeSection.value = 'sistema'
       await fetchFiles()
     } else {
