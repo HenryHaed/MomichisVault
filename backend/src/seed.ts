@@ -34,14 +34,14 @@ async function runSeed() {
       nombre: 'Entrada Mágica',
       tipoCarpeta: TipoCarpeta.ENTRADA_MAGICA,
       usuario: admin,
-      idCarpetaNube: 'folder_input_mock_id_123'
+      idCarpetaNube: '/Entrada Magica'
     });
     
     const carpetaSalida = carpetaRepository.create({
       nombre: 'Salida Procesada',
       tipoCarpeta: TipoCarpeta.SALIDA_PROCESADA,
       usuario: admin,
-      idCarpetaNube: 'folder_output_mock_id_456'
+      idCarpetaNube: '/Salida Procesada'
     });
 
     await carpetaRepository.save([carpetaEntrada, carpetaSalida]);

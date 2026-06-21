@@ -427,10 +427,18 @@ export class DropboxService {
       throw new Error('Falta configurar la carpeta de Salida en la BD.');
     }
 
+    const pathSalidaBase = carpetaSalida.idCarpetaNube.startsWith('id:')
+      ? carpetaSalida.idCarpetaNube
+      : (carpetaSalida.idCarpetaNube.startsWith('/') ? carpetaSalida.idCarpetaNube : `/${carpetaSalida.idCarpetaNube}`);
+
     let listResponse;
     try {
-      listResponse = await dbx.filesListFolder({ path: carpetaSalida.idCarpetaNube });
+      listResponse = await dbx.filesListFolder({ path: pathSalidaBase });
     } catch (e: any) {
+       // Si la carpeta no existe aún en Dropbox, simplemente retornamos lista vacía sin loguear error
+       if (e?.error?.error_summary?.includes('path/not_found')) {
+         return { ok: true, files: [] };
+       }
        console.log('Error listing folder: ', e?.error || e);
        return { ok: false, files: [] };
     }
@@ -583,17 +591,24 @@ export class DropboxService {
       return;
     }
 
+    const listParamsPath = carpetaEntrada.idCarpetaNube.startsWith('id:') 
+      ? carpetaEntrada.idCarpetaNube 
+      : (carpetaEntrada.idCarpetaNube.startsWith('/') ? carpetaEntrada.idCarpetaNube : `/${carpetaEntrada.idCarpetaNube}`);
+
     const listParams = integracion.cursorWebhook
       ? { cursor: integracion.cursorWebhook }
-      : { path: `id:${carpetaEntrada.idCarpetaNube}` };
+      : { path: listParamsPath };
 
     let listResponse;
     try {
       listResponse = integracion.cursorWebhook
         ? await dbx.filesListFolderContinue(listParams as any)
         : await dbx.filesListFolder(listParams as any);
-    } catch (error) {
-      if (this.isInvalidAccessTokenError(error)) {
+    } catch (error: any) {
+      if (error?.error?.error_summary?.includes('path/not_found')) {
+        // La carpeta de entrada no existe en Dropbox todavía, ignorar
+        return;
+      } else if (this.isInvalidAccessTokenError(error)) {
         const refreshed = await this.refreshAccessToken(integracion);
         dbx = new Dropbox({ accessToken: refreshed });
         listResponse = integracion.cursorWebhook
